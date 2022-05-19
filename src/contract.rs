@@ -1,11 +1,16 @@
 #[cfg(not(feature = "library"))]
 use cosmwasm_std::entry_point;
-use cosmwasm_std::{to_binary, Binary, Deps, DepsMut, Env, MessageInfo, Response, StdResult};
+use cosmwasm_std::{to_binary, Binary, Deps, DepsMut, Env, MessageInfo, Response, StdResult, Addr};
 use cw2::set_contract_version;
 
 use crate::error::ContractError;
 use crate::msg::{CountResponse, ExecuteMsg, InstantiateMsg, QueryMsg};
-use crate::state::{State, STATE};
+use crate::state::{
+    STATE,
+    AdminInfo, ADMIN_INFO,
+    GroupInfo, GROUP_INFO,
+};
+use crate::types::{SchnorrSign, Bytes20, Bytes32};
 
 // version info for migration info
 const CONTRACT_NAME: &str = "crates.io:muon-cosmos";
@@ -18,17 +23,16 @@ pub fn instantiate(
     info: MessageInfo,
     msg: InstantiateMsg,
 ) -> Result<Response, ContractError> {
-    let state = State {
-        count: msg.count,
-        owner: info.sender.clone(),
-    };
     set_contract_version(deps.storage, CONTRACT_NAME, CONTRACT_VERSION)?;
-    STATE.save(deps.storage, &state)?;
+    let admin_info = AdminInfo {
+        admin: info.sender.clone(),
+    };
+
+    ADMIN_INFO.save(deps.storage, &admin_info)?;
 
     Ok(Response::new()
         .add_attribute("method", "instantiate")
-        .add_attribute("owner", info.sender)
-        .add_attribute("count", msg.count.to_string()))
+        .add_attribute("owner", info.sender))
 }
 
 #[cfg_attr(not(feature = "library"), entry_point)]
@@ -39,29 +43,84 @@ pub fn execute(
     msg: ExecuteMsg,
 ) -> Result<Response, ContractError> {
     match msg {
-        ExecuteMsg::Increment {} => try_increment(deps),
-        ExecuteMsg::Reset { count } => try_reset(deps, info, count),
+        ExecuteMsg::TransferAdmin { new_admin } => try_transfer_admin(deps, info, new_admin),
+        ExecuteMsg::AddGroup {
+            eth_address,
+            pubkey_x,
+            pubkey_y_parity
+        } => try_add_group(deps, info, eth_address, pubkey_x, pubkey_y_parity),
+        ExecuteMsg::VerifySignature {
+            req_id,
+            hash,
+            sign
+        } => try_verify_sign(deps, info, req_id, hash, sign),
     }
 }
 
-pub fn try_increment(deps: DepsMut) -> Result<Response, ContractError> {
-    STATE.update(deps.storage, |mut state| -> Result<_, ContractError> {
-        state.count += 1;
-        Ok(state)
+//pub fn try_increment(deps: DepsMut) -> Result<Response, ContractError> {
+//    STATE.update(deps.storage, |mut state| -> Result<_, ContractError> {
+//        state.count += 1;
+//        Ok(state)
+//    })?;
+//
+//    Ok(Response::new().add_attribute("method", "try_increment"))
+//}
+
+//pub fn try_reset(deps: DepsMut, info: MessageInfo, count: i32) -> Result<Response, ContractError> {
+//    STATE.update(deps.storage, |mut state| -> Result<_, ContractError> {
+//        if info.sender != state.owner {
+//            return Err(ContractError::Unauthorized {});
+//        }
+//        state.count = count;
+//        Ok(state)
+//    })?;
+//    Ok(Response::new().add_attribute("method", "reset"))
+//}
+
+pub fn try_transfer_admin(deps: DepsMut, info: MessageInfo, new_admin: Addr) -> Result<Response, ContractError> {
+    ADMIN_INFO.update(deps.storage, |mut admin_info| -> Result<_, ContractError> {
+        admin_info.admin = new_admin.clone();
+        Ok(admin_info)
     })?;
 
-    Ok(Response::new().add_attribute("method", "try_increment"))
+    Ok(Response::new()
+        .add_attribute("method", "transfer_admin")
+        .add_attribute("to", new_admin)
+    )
 }
 
-pub fn try_reset(deps: DepsMut, info: MessageInfo, count: i32) -> Result<Response, ContractError> {
-    STATE.update(deps.storage, |mut state| -> Result<_, ContractError> {
-        if info.sender != state.owner {
-            return Err(ContractError::Unauthorized {});
-        }
-        state.count = count;
-        Ok(state)
-    })?;
-    Ok(Response::new().add_attribute("method", "reset"))
+pub fn try_add_group(
+    deps: DepsMut,
+    info: MessageInfo,
+    eth_address: Bytes20,
+    pubkey_x: Bytes32,
+    pubkey_y_parity: u8
+) -> Result<Response, ContractError> {
+    let group_info = GroupInfo {
+        is_valid: true,
+        eth_address: eth_address.clone(),
+        pubkey_x: pubkey_x.clone(),
+        pubkey_y_parity
+    };
+    GROUP_INFO.save(deps.storage, eth_address.clone(), &group_info);
+
+    Ok(
+        Response::new()
+//            .add_attribute("method", "add_group")
+//            .add_attribute("eth_address", hex::encode(eth_address))
+//            .add_attribute("pubkey_x", hex::encode(pubkey_x))
+//            .add_attribute("pubkey_y_parity", hex::encode([pubkey_y_parity]))
+    )
+}
+
+pub fn try_verify_sign(
+    deps: DepsMut,
+    info: MessageInfo,
+    req_id: Bytes32,
+    hash: Bytes32,
+    sign: SchnorrSign
+) -> Result<Response, ContractError> {
+    Ok(Response::new())
 }
 
 #[cfg_attr(not(feature = "library"), entry_point)]

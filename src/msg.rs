@@ -1,16 +1,33 @@
 use schemars::JsonSchema;
+use cosmwasm_std::Addr;
 use serde::{Deserialize, Serialize};
+//use serde::ser::{Serialize, SerializeStruct};
+use crate::types::{
+    SchnorrSign,
+    Bytes32,
+    Bytes20,
+};
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
 pub struct InstantiateMsg {
     pub count: i32,
 }
 
-#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq)]
 #[serde(rename_all = "snake_case")]
 pub enum ExecuteMsg {
-    Increment {},
-    Reset { count: i32 },
+    TransferAdmin { new_admin: Addr },
+    AddGroup {
+        eth_address: Bytes20,
+        pubkey_x: Bytes32,
+        pubkey_y_parity: u8
+    },
+    VerifySignature {
+        /// TODO: convert to [u8; 36]
+        req_id: Bytes32,
+        hash: Bytes32,
+        sign: SchnorrSign
+    }
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
