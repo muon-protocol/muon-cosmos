@@ -60,7 +60,7 @@ pub struct SchnorrSign {
     // s value of signature
     pub signature: Bytes32,
     // ethereum address of signer
-    pub address: Bytes32,
+    pub address: Bytes20,
     // ethereum address of nonce
-    pub nonce: Bytes32
+    pub nonce: Bytes20
 }

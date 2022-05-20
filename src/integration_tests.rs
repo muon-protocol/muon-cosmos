@@ -59,13 +59,13 @@ mod tests {
         use super::*;
         use crate::msg::ExecuteMsg;
 
-        #[test]
-        fn count() {
-            let (mut app, cw_template_contract) = proper_instantiate();
-
-            let msg = ExecuteMsg::Increment {};
-            let cosmos_msg = cw_template_contract.call(msg).unwrap();
-            app.execute(Addr::unchecked(USER), cosmos_msg).unwrap();
-        }
+//        #[test]
+//        fn count() {
+//            let (mut app, cw_template_contract) = proper_instantiate();
+//
+//            let msg = ExecuteMsg::Increment {};
+//            let cosmos_msg = cw_template_contract.call(msg).unwrap();
+//            app.execute(Addr::unchecked(USER), cosmos_msg).unwrap();
+//        }
     }
 }

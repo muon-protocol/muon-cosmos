@@ -12,7 +12,12 @@ macro_rules! construct_fixed_bytes {
         $(#[$attr])*
         $visibility struct $name (pub [u8; $n_bytes]);
 
-
+        impl From<Vec<u8>> for $name {
+            #[inline]
+            fn from(v: Vec<u8>) -> Self {
+                $name(array_ref!(v, 0, $n_bytes).clone())
+            }
+        }
 
 		impl From<[u8; $n_bytes]> for $name {
 			/// Constructs a bytes type from the given bytes array of fixed length.

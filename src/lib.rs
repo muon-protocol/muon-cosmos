@@ -6,5 +6,9 @@ pub mod msg;
 pub mod state;
 pub mod types;
 pub mod fixed_bytes;
+mod utils;
+
+#[macro_use]
+extern crate arrayref;
 
 pub use crate::error::ContractError;

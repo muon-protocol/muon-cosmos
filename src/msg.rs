@@ -1,9 +1,9 @@
 use schemars::JsonSchema;
 use cosmwasm_std::Addr;
 use serde::{Deserialize, Serialize};
-//use serde::ser::{Serialize, SerializeStruct};
 use crate::types::{
     SchnorrSign,
+    MuonRequestId,
     Bytes32,
     Bytes20,
 };
@@ -24,7 +24,7 @@ pub enum ExecuteMsg {
     },
     VerifySignature {
         /// TODO: convert to [u8; 36]
-        req_id: Bytes32,
+        req_id: MuonRequestId,
         hash: Bytes32,
         sign: SchnorrSign
     }
