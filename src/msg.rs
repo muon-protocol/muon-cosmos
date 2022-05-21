@@ -7,11 +7,10 @@ use crate::types::{
     Bytes32,
     Bytes20,
 };
+use crate::state::GroupInfo;
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
-pub struct InstantiateMsg {
-    pub count: i32,
-}
+pub struct InstantiateMsg {}
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq)]
 #[serde(rename_all = "snake_case")]
@@ -34,11 +33,25 @@ pub enum ExecuteMsg {
 #[serde(rename_all = "snake_case")]
 pub enum QueryMsg {
     // GetCount returns the current count as a json-encoded number
-    GetCount {},
+    GetAdmin {},
+    GetGroupList {},
+    GetGroupInfo {
+        group: Bytes20
+    }
 }
 
 // We define a custom struct for each query response
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
-pub struct CountResponse {
-    pub count: i32,
+pub struct AdminResponse {
+    pub admin: Addr,
+}
+
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
+pub struct GroupListResponse {
+    pub groups: Vec<GroupInfo>,
+}
+
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
+pub struct GroupInfoResponse {
+    pub group: GroupInfo,
 }

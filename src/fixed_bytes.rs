@@ -1,9 +1,9 @@
 //use serde::{Deserialize, Serialize};
-//use schemars::{
-//    gen::SchemaGenerator,
-//    schema::*,
-//    JsonSchema,
-//};
+use schemars::{
+    gen::SchemaGenerator,
+    schema::*,
+    JsonSchema,
+};
 
 #[macro_export]
 macro_rules! construct_fixed_bytes {
@@ -277,6 +277,28 @@ macro_rules! construct_fixed_bytes {
 //                .into()
 //            }
 //        }
+
+        impl schemars::JsonSchema for $name {
+//                no_ref_schema!();
+
+                fn schema_name() -> String {
+                    format!("Fixed_array_size_{}_of_u8", $n_bytes)
+                }
+
+                fn json_schema(gen: &mut schemars::gen::SchemaGenerator) -> schemars::schema::Schema {
+                    schemars::schema::SchemaObject {
+                        instance_type: Some(schemars::schema::InstanceType::Array.into()),
+                        array: Some(Box::new(schemars::schema::ArrayValidation {
+                            items: Some(gen.subschema_for::<u8>().into()),
+                            max_items: Some($n_bytes),
+                            min_items: Some($n_bytes),
+                            ..Default::default()
+                        })),
+                        ..Default::default()
+                    }
+                    .into()
+                }
+            }
 
         /// PartialEq implementation
         impl PartialEq for $name {

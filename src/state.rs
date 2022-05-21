@@ -24,7 +24,7 @@ pub struct AdminInfo {
 pub const ADMIN_INFO: Item<AdminInfo> = Item::new("admin");
 
 
-#[derive(Serialize, Deserialize, Clone, Debug, PartialEq)]
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
 pub struct GroupInfo {
     pub is_valid: bool,
     pub eth_address: Bytes20,

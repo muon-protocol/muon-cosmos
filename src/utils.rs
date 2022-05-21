@@ -5,11 +5,6 @@ use cosmwasm_crypto::{
     secp256k1_recover_pubkey,
     CryptoError
 };
-//use solana_program::{
-//    secp256k1_recover::{
-//        secp256k1_recover
-//    }
-//};
 use {
     thiserror::Error,
 };
@@ -39,7 +34,7 @@ pub fn schnorr_verify(
     signature_s: [u8; 32],
     msg_hash: [u8; 32],
     nonce_address: [u8; 20]
-)-> Result<(bool, u256), ContractError> {
+)-> Result<bool, ContractError> {
     schnorr_verify_u256(
         u256::from_big_endian(&signing_pubkey_x),
         signing_pubkey_y_parity,
@@ -55,7 +50,8 @@ pub fn schnorr_verify_u256(
     signature_s: u256,
     msg_hash: u256,
     nonce_address: u256
-) -> Result<(bool, u256), ContractError> {
+) -> Result<bool, ContractError> {
+    // TODO: replace primitive_types::U256 by native UInt256
 
     let Q:u256 = u256::from_big_endian(&Q_BYTES);
     let Q_HALF = (Q >> 1) + 1;
@@ -89,7 +85,7 @@ pub fn schnorr_verify_u256(
 
     let e_2 = make_msg_challenge(nonce_address_2, msg_hash).unwrap();
 
-    Ok((e_2 == e, nonce_address_2))
+    Ok(e_2 == e)
 }
 
 fn pub_to_eth_address(pubkey: &[u8; 64]) -> u256 {
