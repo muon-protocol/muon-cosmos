@@ -1,9 +1,3 @@
-//use serde::{Deserialize, Serialize};
-use schemars::{
-    gen::SchemaGenerator,
-    schema::*,
-    JsonSchema,
-};
 
 #[macro_export]
 macro_rules! construct_fixed_bytes {
@@ -254,29 +248,6 @@ macro_rules! construct_fixed_bytes {
                 Ok($name(bytes))
 			}
 		}
-
-//        / JsonSchema implementation
-//        impl JsonSchema for $name {
-//            no_ref_schema!();
-//
-//            fn schema_name() -> String {
-//                format!("Array_size_{}_of_{}", $n_bytes, u8::schema_name())
-//            }
-//
-//            fn json_schema(gen: &mut SchemaGenerator) -> Schema {
-//                SchemaObject {
-//                    instance_type: Some(InstanceType::Array.into()),
-//                    array: Some(Box::new(ArrayValidation {
-//                        items: Some(gen.subschema_for::<u8>().into()),
-//                        max_items: Some($n_bytes),
-//                        min_items: Some($n_bytes),
-//                        ..Default::default()
-//                    })),
-//                    ..Default::default()
-//                }
-//                .into()
-//            }
-//        }
 
         impl schemars::JsonSchema for $name {
 //                no_ref_schema!();

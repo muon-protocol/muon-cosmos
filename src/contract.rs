@@ -26,7 +26,7 @@ pub fn instantiate(
     deps: DepsMut,
     _env: Env,
     info: MessageInfo,
-    msg: InstantiateMsg,
+    _msg: InstantiateMsg,
 ) -> Result<Response, ContractError> {
     set_contract_version(deps.storage, CONTRACT_NAME, CONTRACT_VERSION)?;
     let admin_info = AdminInfo {
@@ -58,11 +58,16 @@ pub fn execute(
             req_id,
             hash,
             sign
-        } => try_verify_sign(deps, info, req_id, hash, sign),
+        } => try_verify_sign(deps, req_id, hash, sign),
     }
 }
 
 pub fn try_transfer_admin(deps: DepsMut, info: MessageInfo, new_admin: Addr) -> Result<Response, ContractError> {
+    let admin_info = ADMIN_INFO.load(deps.storage)?;
+    if admin_info.admin != info.sender {
+        return Err(ContractError::AdminRestricted {});
+    }
+
     ADMIN_INFO.update(deps.storage, |mut admin_info| -> Result<_, ContractError> {
         admin_info.admin = new_admin.clone();
         Ok(admin_info)
@@ -92,20 +97,19 @@ pub fn try_add_group(
         pubkey_x: pubkey_x.clone(),
         pubkey_y_parity
     };
-    GROUP_INFO.save(deps.storage, eth_address.clone(), &group_info);
+    GROUP_INFO.save(deps.storage, eth_address.clone(), &group_info)?;
 
     Ok(
         Response::new()
-//            .add_attribute("method", "add_group")
-//            .add_attribute("eth_address", hex::encode(eth_address))
-//            .add_attribute("pubkey_x", hex::encode(pubkey_x))
-//            .add_attribute("pubkey_y_parity", hex::encode([pubkey_y_parity]))
+            .add_attribute("method", "add_group")
+            .add_attribute("eth_address", hex::encode(eth_address))
+            .add_attribute("pubkey_x", hex::encode(pubkey_x))
+            .add_attribute("pubkey_y_parity", hex::encode([pubkey_y_parity]))
     )
 }
 
 pub fn try_verify_sign(
     deps: DepsMut,
-    info: MessageInfo,
     req_id: MuonRequestId,
     hash: Bytes32,
     sign: SchnorrSign
@@ -148,7 +152,6 @@ fn query_admin(deps: Deps) -> StdResult<AdminResponse> {
 }
 
 fn query_groups_list(deps: Deps) -> StdResult<GroupListResponse> {
-    /// result: std::vec::Vec<(std::vec::Vec<u8>, GroupInfo)>
     let groups: Vec<GroupInfo> = GROUP_INFO
         .range(deps.storage, None, None, Order::Ascending)
         .map(|_res| _res.unwrap().1)

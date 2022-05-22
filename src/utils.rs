@@ -5,9 +5,6 @@ use cosmwasm_crypto::{
     secp256k1_recover_pubkey,
     CryptoError
 };
-use {
-    thiserror::Error,
-};
 use crate::error::ContractError;
 
 const Q_BYTES:[u8; 32] = hex_literal::hex!("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEBAAEDCE6AF48A03BBFD25E8CD0364141");
