@@ -1,8 +1,13 @@
 [package]
-name = "muon-cosmos"
+name = "muon-verify"
 version = "0.1.0"
+description = "Muon signature verification contract"
 authors = ["Sadegh Teymouri <sadeghte@gmail.com>"]
+readme = "README.md"
+repository = "https://github.com/muon-protocol/muon-cosmos"
 edition = "2018"
+keywords = ["crypto", "muon"]
+categories = ["cryptography"]
 
 exclude = [
   # Those files are rust-optimizer artifacts. You might want to commit them for convenience but they should not be part of the source code publication.

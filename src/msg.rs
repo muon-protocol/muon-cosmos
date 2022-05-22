@@ -22,7 +22,6 @@ pub enum ExecuteMsg {
         pubkey_y_parity: u8
     },
     VerifySignature {
-        /// TODO: convert to [u8; 36]
         req_id: MuonRequestId,
         hash: Bytes32,
         sign: SchnorrSign

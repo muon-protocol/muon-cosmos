@@ -9,7 +9,6 @@ use crate::{
     error::ContractError,
     msg::{ExecuteMsg, InstantiateMsg, QueryMsg},
     state::{
-        STATE,
         AdminInfo, ADMIN_INFO,
         GroupInfo, GROUP_INFO,
     },
