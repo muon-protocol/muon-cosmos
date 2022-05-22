@@ -1,4 +1,4 @@
-//use schemars::JsonSchema;
+use schemars::JsonSchema;
 use serde::{Deserialize, Deserializer, Serialize, Serializer};
 use crate::construct_fixed_bytes;
 use cosmwasm_std::{StdResult};
@@ -55,7 +55,7 @@ impl<'a> KeyDeserialize for &'a Bytes20 {
 }
 
 
-#[derive(Serialize, Deserialize, Clone, Debug, PartialEq)]
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
 pub struct SchnorrSign {
     // s value of signature
     pub signature: Bytes32,

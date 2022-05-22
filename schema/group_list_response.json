@@ -1,0 +1,63 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "GroupListResponse",
+  "type": "object",
+  "required": [
+    "groups"
+  ],
+  "properties": {
+    "groups": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/GroupInfo"
+      }
+    }
+  },
+  "definitions": {
+    "Fixed_array_size_20_of_u8": {
+      "type": "array",
+      "items": {
+        "type": "integer",
+        "format": "uint8",
+        "minimum": 0.0
+      },
+      "maxItems": 20,
+      "minItems": 20
+    },
+    "Fixed_array_size_32_of_u8": {
+      "type": "array",
+      "items": {
+        "type": "integer",
+        "format": "uint8",
+        "minimum": 0.0
+      },
+      "maxItems": 32,
+      "minItems": 32
+    },
+    "GroupInfo": {
+      "type": "object",
+      "required": [
+        "eth_address",
+        "is_valid",
+        "pubkey_x",
+        "pubkey_y_parity"
+      ],
+      "properties": {
+        "eth_address": {
+          "$ref": "#/definitions/Fixed_array_size_20_of_u8"
+        },
+        "is_valid": {
+          "type": "boolean"
+        },
+        "pubkey_x": {
+          "$ref": "#/definitions/Fixed_array_size_32_of_u8"
+        },
+        "pubkey_y_parity": {
+          "type": "integer",
+          "format": "uint8",
+          "minimum": 0.0
+        }
+      }
+    }
+  }
+}

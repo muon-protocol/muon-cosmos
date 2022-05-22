@@ -3,8 +3,8 @@ use std::fs::create_dir_all;
 
 use cosmwasm_schema::{export_schema, remove_schemas, schema_for};
 
-use muon_cosmos::msg::{AdminResponse, ExecuteMsg, InstantiateMsg, QueryMsg};
-use muon_cosmos::state::State;
+use muon_cosmos::msg::{AdminResponse, GroupListResponse, GroupInfoResponse, ExecuteMsg, InstantiateMsg, QueryMsg};
+use muon_cosmos::state::{AdminInfo, GroupInfo};
 
 fn main() {
     let mut out_dir = current_dir().unwrap();
@@ -15,6 +15,9 @@ fn main() {
     export_schema(&schema_for!(InstantiateMsg), &out_dir);
     export_schema(&schema_for!(ExecuteMsg), &out_dir);
     export_schema(&schema_for!(QueryMsg), &out_dir);
-    export_schema(&schema_for!(State), &out_dir);
+    export_schema(&schema_for!(AdminInfo), &out_dir);
+    export_schema(&schema_for!(GroupInfo), &out_dir);
     export_schema(&schema_for!(AdminResponse), &out_dir);
+    export_schema(&schema_for!(GroupListResponse), &out_dir);
+    export_schema(&schema_for!(GroupInfoResponse), &out_dir);
 }
